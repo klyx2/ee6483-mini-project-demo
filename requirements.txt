@@ -1,6 +1,5 @@
-jupyter
-tensorflow
-jupyterlab 
+tensorflow 
 pandas 
 numpy 
 matplotlib
+scipy

@@ -1,3 +1,7 @@
 # 或者更通用的规则
 my_pro_demo/
 datasets/
+datasets*/
+log/
+datasets.zip/
+datasets.zip

@@ -1,0 +1,54 @@
+#!/bin/bash
+#SBATCH --job-name=zyl_dogVScat
+#SBATCH --gpus=6000ada:1
+#SBATCH --time=6:00:00
+#SBATCH --output=./log/job-%j.out
+#SBATCH --error=./log/job-%j.err
+
+echo "Loading modules..."
+# 1. 加载 CUDA (这个非常重要, 解决 GPU 问题)
+# (如果 'CUDA' 太模糊, 试试 'module load CUDA/11.8.0' 之类的具体版本)
+module load CUDA 
+
+# 2. 加载 Conda
+module load Miniforge3
+
+echo "Activating Conda environment..."
+source activate mini_pro
+
+# echo "Unzipping datasets using Python..."
+# --- 这是新的解压命令 ---
+# 我们用一行 Python 命令来调用 zipfile 库解压
+# -c "..." 允许你直接运行引号内的 Python代码
+# python -c "import zipfile, os
+# zip_path = 'datasets.zip'
+# extract_path = '.'
+# if os.path.exists(zip_path):
+#     try:
+#         with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+#             zip_ref.extractall(extract_path)
+#         print(f'Successfully extracted {zip_path} to {extract_path}')
+#     except Exception as e:
+#         print(f'Error extracting {zip_path}: {e}')
+# else:
+#     print(f'Error: {zip_path} not found.')
+# "
+
+# --- 调试信息：检查文件是否真的被解压出来了 ---
+echo "--- DEBUG INFO AFTER UNZIP ---"
+echo "Files in current directory now:"
+ls -l
+# 检查一下 datasets 目录是否存在
+echo "Checking for 'datasets/train'..."
+ls -ld datasets/train
+echo "--- DEBUG INFO END ---"
+
+echo "install requirements"
+pip install -r requirements.txt
+
+echo "Starting Python script..."
+# 检查 GPU 是否被正确识别
+nvidia-smi 
+python dogVScat.py
+
+echo "Job finished."
